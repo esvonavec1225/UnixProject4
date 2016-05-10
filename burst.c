@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
@@ -17,32 +18,37 @@
 
 int main( int argc, char *argv[] )  {
 	int c;
-	int help = 0;
-	int version = 0;
+	static int help = 0;
+	static int version = 0;
 	int lines_per_file = 500;
 	if (argc <= 1) {
 		printf("At least one parameter (filename) is required\n");
 	}
 	else {
 		opterr = 0;
-		while ((c = getopt(argc, argv, "hvl:")) != -1) {
+		while (1) {
+			static struct option long_options[] = {
+				{"version", no_argument, &version, 1},
+				{"help", no_argument, &help, 1},
+				{"lines", required_argument, 0, 'l'},
+				{0, 0, 0, 0}
+			};
+
+			int option_index = 0;
+
+			c = getopt_long(argc, argv, "l:", long_options, &option_index);
+			if (c == -1)
+				break;
+
 			switch(c) {
-				case 'h':
-					help = 1;
-					break;
 				case 'l':
 					lines_per_file = atoi(optarg);
 					break;
-				case 'v':
-					version = 1;
-					break;
-				default:
-					printf("Invalid Parameter(s)");
 			}
 		}
 
 		if (help == 1) {
-			printf("HELP!\n");
+			printf("Usage: burst [OPTION]... [FILE]...\nburst is high level shell program for splitting a file into segments.\nThe result will be multiple files with the max number of lines as defined by the user (default is 500).\n\nMandatory arguments to long options are mandatory for short options too.\n	-l, --lines	specify the maximum amount of lines per output file\n	    --help  	display this help and exit\n	    --version	display the version information and exit\n");
 			return 1;
 		}
 		else if (version == 1) {
@@ -114,3 +120,4 @@ int main( int argc, char *argv[] )  {
 	}
 	return 1;
 }
+
