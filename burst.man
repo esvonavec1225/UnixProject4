@@ -11,6 +11,11 @@ burst is high level shell program for splitting a file into segments. The result
 Specify the maximum amount of lines per output file.
 Default is 500 lines.
 .TP
+.BR \-o ", " \-\-output=\fIFILENAME\fR
+Specify the resulting filenames.
+Must contain a period.
+Default is import file.
+.TP
 .BR \-\-help
 Display the help information and exit.
 .TP
