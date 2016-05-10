@@ -40,20 +40,20 @@ int main( int argc, char *argv[] )  {
 		strcat(new_filename,"1");
 		strcat(new_filename,new_ext);
 
-		int writer = open(new_filename, O_WRONLY | O_CREAT, 0644);
-		if (writer == -1) {
+		int writer_file = open(new_filename, O_WRONLY | O_CREAT, 0644);
+		if (writer_file == -1) {
 			printf("Unable to create file: %s\n", filename);
 			return 1;
 		}
 	
-		int lines_per_file = 500;
+		int lines_per_file = 5;
 		int curline = 0;
 		char buffer[BUFFER_SIZE];
+		ssize_t writer;
 		ssize_t reader;
 		while ((reader = read(opener, &buffer, BUFFER_SIZE)) > 0) {
+			writer = write(writer_file, &buffer, (ssize_t) reader);
 			for (int i = 0; i < reader; ++i) {
-				
-				printf("%c", buffer[i]);
 				if (buffer[i]=='\n') {
 					curline++;
 					if (curline == lines_per_file) {
