@@ -41,21 +41,19 @@ int main( int argc, char *argv[] )  {
 		strcat(new_filename,"1");
 		strcat(new_filename,new_ext);
 
-		int writer_file = open(new_filename, O_WRONLY | O_CREAT, 0644);
-		if (writer_file == -1) {
-			printf("Unable to create file: %s\n", filename);
-			return 1;
-		}
-	
-		int lines_per_file = 5;
+		int lines_per_file = 6;
 		int curline = 0;
-		int curfile = 1;
+		int curfile = 0;
 		char buffer[BUFFER_SIZE];
+		int writer_file;
 		ssize_t writer;
 		ssize_t reader;
+		char content[BUFFER_SIZE];
+                int characters = 0;
 		while ((reader = read(opener, &buffer, BUFFER_SIZE)) > 0) {
-			writer = write(writer_file, &buffer, (ssize_t) reader);
 			for (int i = 0; i < reader; ++i) {
+				content[characters] = buffer[i];
+				++characters;
 				if (buffer[i]=='\n') {
 					curline++;
 					if (curline == lines_per_file) {
@@ -67,11 +65,23 @@ int main( int argc, char *argv[] )  {
 						strcat(new_filename,buf);
 				                strcat(new_filename,new_ext);
 						writer_file = open(new_filename, O_WRONLY | O_CREAT, 0644);
+						writer = write(writer_file, &content, characters);
+						memset(&content[0], 0, sizeof(content));
+						characters = 0;
 					}
 				}
 			}
 		}
-		printf("Lines: %d\n", curline);
+		if (characters > 0) {
+			 ++curfile;
+                         strcpy(new_filename,original_new_filename);
+                         char buf[12];
+                         sprintf(buf, "%d", curfile);
+                         strcat(new_filename,buf);
+                         strcat(new_filename,new_ext);
+                         writer_file = open(new_filename, O_WRONLY | O_CREAT, 0644);
+                         writer = write(writer_file, &content, characters);	
+		}
 	}
 	return 1;
 }
