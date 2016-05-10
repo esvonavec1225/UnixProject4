@@ -21,6 +21,7 @@ int main( int argc, char *argv[] )  {
 	static int help = 0;
 	static int version = 0;
 	int lines_per_file = 500;
+	char output_filename[100];
 	if (argc <= 1) {
 		printf("At least one parameter (filename) is required\n");
 	}
@@ -31,12 +32,13 @@ int main( int argc, char *argv[] )  {
 				{"version", no_argument, &version, 1},
 				{"help", no_argument, &help, 1},
 				{"lines", required_argument, 0, 'l'},
+				{"output", required_argument, 0, 'o'},
 				{0, 0, 0, 0}
 			};
 
 			int option_index = 0;
 
-			c = getopt_long(argc, argv, "l:", long_options, &option_index);
+			c = getopt_long(argc, argv, "o:l:", long_options, &option_index);
 			if (c == -1)
 				break;
 
@@ -44,11 +46,14 @@ int main( int argc, char *argv[] )  {
 				case 'l':
 					lines_per_file = atoi(optarg);
 					break;
+				case 'o':
+					strcpy(output_filename,optarg);
+					break;
 			}
 		}
 
 		if (help == 1) {
-			printf("Usage: burst [OPTION]... [FILE]...\nburst is high level shell program for splitting a file into segments.\nThe result will be multiple files with the max number of lines as defined by the user (default is 500).\n\nMandatory arguments to long options are mandatory for short options too.\n	-l, --lines	specify the maximum amount of lines per output file\n	    --help  	display this help and exit\n	    --version	display the version information and exit\n");
+			printf("Usage: burst [OPTION]... [FILE]...\nburst is high level shell program for splitting a file into segments.\nThe result will be multiple files with the max number of lines as defined by the user (default is 500).\n\nMandatory arguments to long options are mandatory for short options too.\n	-l, --lines	specify the maximum amount of lines per output file\n	-o, --output	specify output file name\n	    --help  	display this help and exit\n	    --version	display the version information and exit\n");
 			return 1;
 		}
 		else if (version == 1) {
@@ -58,17 +63,31 @@ int main( int argc, char *argv[] )  {
 
 		char *filename = argv[argc-1];
 
+		 if (strpbrk(filename, ".") == 0) {
+                        printf("Input filename must contain a period\n");
+                        return 0;
+                }
+
 		int opener = open(filename, O_RDONLY);
 		if (opener == -1) {
 			printf("Unable to open file: %s\n", filename);
 			return 1;
 		}
+		
+		if (output_filename[0] == '\0') {
+			strcpy(output_filename, filename);
+		}
+		
+		if (strpbrk(output_filename, ".") == 0) {
+			printf("Output filename must contain a period\n");
+			return 0;
+		}
 
 		char original_new_filename[100];
-		char *new_filename = malloc(strlen(filename) + 1);
+		char *new_filename = malloc(strlen(output_filename) + 1);
 		char *dot;
-		char *ext = strrchr(filename, '.');
-		strcpy(new_filename, filename);
+		char *ext = strrchr(output_filename, '.');
+		strcpy(new_filename, output_filename);
 		dot = strrchr(new_filename, '.');
 		*dot = '\0';
 		char new_ext[100];		
