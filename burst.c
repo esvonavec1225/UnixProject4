@@ -28,6 +28,7 @@ int main( int argc, char *argv[] )  {
 			return 1;
 		}
 
+		char original_new_filename[100];
 		char *new_filename = malloc(strlen(filename) + 1);
 		char *dot;
 		char *ext = strrchr(filename, '.');
@@ -35,8 +36,8 @@ int main( int argc, char *argv[] )  {
 		dot = strrchr(new_filename, '.');
 		*dot = '\0';
 		char new_ext[100];		
+		strcpy(original_new_filename, new_filename);
 		strcpy(new_ext, ext);
-		char *original_new_filename = new_filename;
 		strcat(new_filename,"1");
 		strcat(new_filename,new_ext);
 
@@ -48,6 +49,7 @@ int main( int argc, char *argv[] )  {
 	
 		int lines_per_file = 5;
 		int curline = 0;
+		int curfile = 1;
 		char buffer[BUFFER_SIZE];
 		ssize_t writer;
 		ssize_t reader;
@@ -58,6 +60,13 @@ int main( int argc, char *argv[] )  {
 					curline++;
 					if (curline == lines_per_file) {
 						curline = 0;
+						++curfile;
+						strcpy(new_filename,original_new_filename);
+						char buf[12];
+						sprintf(buf, "%d", curfile);
+						strcat(new_filename,buf);
+				                strcat(new_filename,new_ext);
+						writer_file = open(new_filename, O_WRONLY | O_CREAT, 0644);
 					}
 				}
 			}
