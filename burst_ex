@@ -1,0 +1,124 @@
+eps8@unix:~/Project4$ burst --version
+burst 1.0
+Copyright (C) 2016 The University of Akron.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Eric Svonavec.
+eps8@unix:~/Project4$ burst --help
+Usage: burst [OPTION]... [FILE]...
+burst is high level shell program for splitting a file into segments.
+The result will be multiple files with the max number of lines as defined by the user (default is 500).
+
+Mandatory arguments to long options are mandatory for short options too.
+	-l, --lines	specify the maximum amount of lines per output file
+	-o, --output	specify output file name
+	    --help  	display this help and exit
+	    --version	display the version information and exit
+eps8@unix:~/Project4$ man ./burst.man
+[?1049h[?1h=man(1)                                                                                                       burst man page                                                                                                      man(1)[m
+[m
+[1mNAME[0m[m
+       burst[m
+[m
+[1mSYNOPSIS[0m[m
+       burst [OPTION]... [FILE]...[m
+[m
+[1mDESCRIPTION[0m[m
+       burst is high level shell program for splitting a file into segments. The result will be multiple files with the max number of lines as defined by the user (default is 500).[m
+[m
+[1mOPTIONS[0m[m
+       [1m-l[0m, [1m--lines=[0m[4mLINES[24m[m
+              Specify the maximum amount of lines per output file.  Default is 500 lines.[m
+[m
+       [1m-o[0m, [1m--output=[0m[4mFILENAME[24m[m
+              Specify the resulting filenames.  Must contain a period.  Default is import file.[m
+[m
+       [1m--help[0m Display the help information and exit.[m
+[m
+       [1m--version[0m[m
+              Display the version information and exit.[m
+[m
+[1mBUGS[0m[m
+       No known bugs.[m
+[m
+[1mAUTHOR[0m[m
+       Eric Svonavec (eps8@zips.uakron.edu)[m
+[m
+1.0                                                                                                           04 May 2016                                                                                                        man(1)[m
+[3m Manual page burst.man line 1/30 (END) (press h for help or q to quit)[23m[K[K[?1l>[?1049l
+eps8@unix:~/Project4$ cat test.txt
+this
+is
+a
+test
+file
+with
+a
+lot
+of
+lines
+eps8@unix:~/Project4$ ls -l
+total 40
+-rwxrwxr-x 1 eps8 eps8  7304 May  4 18:50 [0m[01;32ma.out[0m
+-rwxrwxr-x 1 eps8 eps8 12276 May 10 19:41 [01;32mburst[0m
+-rw-rw-r-- 1 eps8 eps8  4197 May 10 19:41 burst.c
+-rw-rw-r-- 1 eps8 eps8   732 May 10 19:27 burst.man
+-rw-rw-r-- 1 eps8 eps8  2867 May 10 19:48 screenlog.0
+-rw-rw-r-- 1 eps8 eps8    40 May  9 18:46 test.txt
+eps8@unix:~/Project4$ burst
+At least one parameter (filename) is required
+eps8@unix:~/Project4$ burst test.txt
+eps8@unix:~/Project4$ ls -l
+total 44
+-rwxrwxr-x 1 eps8 eps8  7304 May  4 18:50 [0m[01;32ma.out[0m
+-rwxrwxr-x 1 eps8 eps8 12276 May 10 19:41 [01;32mburst[0m
+-rw-rw-r-- 1 eps8 eps8  4197 May 10 19:41 burst.c
+-rw-rw-r-- 1 eps8 eps8   732 May 10 19:27 burst.man
+-rw-rw-r-- 1 eps8 eps8  3652 May 10 19:49 screenlog.0
+-rw-r--r-- 1 eps8 eps8    40 May 10 19:49 test1.txt
+-rw-rw-r-- 1 eps8 eps8    40 May  9 18:46 test.txt
+eps8@unix:~/Project4$ cat test1.txt | diff - test.txt
+eps8@unix:~/Project4$ rm test1.txt
+eps8@unix:~/Project4$ burst -l 2 test.txt
+eps8@unix:~/Project4$ ls -l
+total 64
+-rwxrwxr-x 1 eps8 eps8  7304 May  4 18:50 [0m[01;32ma.out[0m
+-rwxrwxr-x 1 eps8 eps8 12276 May 10 19:41 [01;32mburst[0m
+-rw-rw-r-- 1 eps8 eps8  4197 May 10 19:41 burst.c
+-rw-rw-r-- 1 eps8 eps8   732 May 10 19:27 burst.man
+-rw-rw-r-- 1 eps8 eps8  4555 May 10 19:50 screenlog.0
+-rw-r--r-- 1 eps8 eps8     8 May 10 19:50 test1.txt
+-rw-r--r-- 1 eps8 eps8     7 May 10 19:50 test2.txt
+-rw-r--r-- 1 eps8 eps8    10 May 10 19:50 test3.txt
+-rw-r--r-- 1 eps8 eps8     6 May 10 19:50 test4.txt
+-rw-r--r-- 1 eps8 eps8     9 May 10 19:50 test5.txt
+-rw-rw-r-- 1 eps8 eps8    40 May  9 18:46 test.txt
+cat test1.txt test2.txt test3.txt test4.txt test5.txt | diff - test.txt
+eps8@unix:~/Project4$ burst test
+Input filename must contain a period
+eps8@unix:~/Project4$ burst -o eric test.txt
+Output filename must contain a period
+eps8@unix:~/Project4$ burst -o eric.txt test.txt
+eps8@unix:~/Project4$ ls -l
+total 68
+-rwxrwxr-x 1 eps8 eps8  7304 May  4 18:50 [0m[01;32ma.out[0m
+-rwxrwxr-x 1 eps8 eps8 12276 May 10 19:41 [01;32mburst[0m
+-rw-rw-r-- 1 eps8 eps8  4197 May 10 19:41 burst.c
+-rw-rw-r-- 1 eps8 eps8   732 May 10 19:27 burst.man
+-rw-r--r-- 1 eps8 eps8    40 May 10 19:51 eric1.txt
+-rw-r--r-- 1 eps8 eps8     7 May 10 19:51 eric2.txt
+-rw-r--r-- 1 eps8 eps8    10 May 10 19:51 eric3.txt
+-rw-r--r-- 1 eps8 eps8     6 May 10 19:51 eric4.txt
+-rw-r--r-- 1 eps8 eps8     9 May 10 19:51 eric5.txt
+-rw-rw-r-- 1 eps8 eps8  7653 May 10 19:51 screenlog.0
+-rw-r--r-- 1 eps8 eps8     8 May 10 19:50 test1.txt
+-rw-r--r-- 1 eps8 eps8     7 May 10 19:50 test2.txt
+-rw-r--r-- 1 eps8 eps8    10 May 10 19:50 test3.txt
+-rw-r--r-- 1 eps8 eps8     6 May 10 19:50 test4.txt
+-rw-r--r-- 1 eps8 eps8     9 May 10 19:50 test5.txt
+-rw-rw-r-- 1 eps8 eps8    40 May  9 18:46 test.txt
+eps8@unix:~/Project4$ cat eric1.txt eric2.txt eric3.txt eric4.txt eric5.txt | diff - test.txt
+eps8@unix:~/Project4$ burst --lines=2 --output=eric.txt test.txt
+eps8@unix:~/Project4$ cat eric1.txt eric2.txt eric3.txt eric4.txt eric5.txt | diff - test.txt
